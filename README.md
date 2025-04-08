@@ -8,4 +8,4 @@ I tried many DSL from other sources and keep improving it in my own practices. H
 **I will try to update this section later. I read a lot but i did not mark them properly during my projects**
 
 # Lience
-Appache v2.0
+Apache-2.0 license
