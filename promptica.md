@@ -2,6 +2,12 @@
 # 1. Introduction
 **Promptica** - LLMP (LLM Prompting Language) is a domain-specific language designed to create structured, logical, and repeatable prompts for Large Language Models. This document defines the complete grammar specification and provides comprehensive examples.
 
+## 1.1 sth You should know before using it
+**license**: Apache-2.0 license
+**version**: v0.1
+**eMail**: aaron.kb.h@gmail.com
+**wx**: NanQuan2023
+
 ## 2. Grammar Specification
 ### 2.1 Basic Structure
 [Optional] Every LLMP program begins with a DSL declaration:
@@ -13,7 +19,9 @@ DSL {
 
 ## 2.2 Statement
 Each statement ends with a semicolon (;).
-```RESPOND "Hello, world!";```
+```
+RESPOND "Hello, world!";
+```
 
 ## 2.3 Variable
 Variables are declared and assigned using the SET keyword:
@@ -292,9 +300,9 @@ DSL {
 }
 ```
 
-# Usage Suggestions
+# Design Thoughts & Suggestions
 1. **Modularity**: Break complex prompts into functions for reusability
 2. **Error Handling**: Always include fallback responses for unexpected inputs
 3. **Clarity**: Use descriptive variable names and STEP descriptions
 4. **Incremental Development**: Start with a basic prompt and expand functionality
-5. **Testing**: Test your prompts with different inputs to ensure robustness
+5. **Testing**: Test prompts with different inputs to ensure robustness
