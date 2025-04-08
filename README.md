@@ -1,5 +1,5 @@
 # promptica
- A Domain Specific Language (DSL) for LLM Prompting (LLMP).
+**promptica**: A Domain Specific Language (DSL) for LLM Prompting (LLMP).
 
 # Why create it?
 I tried many DSL from other sources and keep improving it in my own practices. Here come my own version.
