@@ -1,308 +1,622 @@
+# Promptica: LLM Prompting Language (LLMP)
 
-# 1. Introduction
-**Promptica** - LLMP (LLM Prompting Language) is a domain-specific language designed to create structured, logical, and repeatable prompts for Large Language Models. This document defines the complete grammar specification and provides comprehensive examples.
+## 1. Introduction
 
-## 1.1 sth You should know before using it
-**license**: Apache-2.0 license
-**version**: v0.1
-**eMail**: aaron.kb.h@gmail.com
-**wx**: NanQuan2023
+**Promptica** is a domain-specific language (DSL) designed to create structured, logical, and repeatable prompts for Large Language Models (LLMs). It enables developers to build complex prompt workflows with control flow, variables, functions, and error handling.
 
-## 2. Grammar Specification
-### 2.1 Basic Structure
-[Optional] Every LLMP program begins with a DSL declaration:
-```
+### 1.1 Project Information
+
+- **License**: Apache-2.0
+- **Version**: v0.1
+- **Contact**: aaron.kb.h@gmail.com
+- **WeChat**: NanQuan2023
+
+---
+
+## 2. Core Concepts
+
+### 2.1 Program Structure
+
+Every Promptica program is enclosed within a `DSL` block:
+
+```promptica
 DSL {
-  // Prompt content
+  // Your prompt logic here
 }
 ```
 
-## 2.2 Statement
-Each statement ends with a semicolon (;).
-```
-RESPOND "Hello, world!";
+The `DSL` declaration is optional but recommended for clarity and tooling support.
+
+### 2.2 Statements and Syntax Rules
+
+- **Statement Termination**: All statements end with a semicolon (`;`)
+- **Comments**: Single-line comments start with `//`
+- **Case Sensitivity**: Keywords are UPPERCASE, variables use lowercase or camelCase
+- **String Literals**: Enclosed in double quotes (`"..."`)
+
+---
+
+## 3. Variables and Data Types
+
+### 3.1 Variable Declaration
+
+Variables are declared using the `SET` keyword and prefixed with `$`:
+
+```promptica
+SET $variable_name = "value";
+SET $count = 0;
+SET $is_valid = true;
 ```
 
-## 2.3 Variable
-Variables are declared and assigned using the SET keyword:
-```
-SET $variable_name = value;
-```
+### 3.2 Dictionaries
 
-## 2.4 List and Dictionary
-### 2.4.1 Dictionary
-Dictionaries are created using curly braces:
-```
+Dictionaries store key-value pairs using curly braces:
+
+```promptica
 SET $config = {
   expertise: "programming, data science";
   tone: "helpful, educational";
   max_attempts: 3;
+  features: ["code generation", "debugging", "explanation"];
 };
 ```
 
-Dictionary properties can be accessed using dot notation:
-```
+**Accessing Dictionary Properties**:
+```promptica
 SET $max_tries = $config.max_attempts;
-```
-Variable references use the $variable_name syntax:
-```
-RESPOND "Hello, $user_name!";
+SET $tone_style = $config.tone;
 ```
 
-### 2.4.2 List
-```
-SET @a_list = [
-  "First item",
-  ITEM "Second item",
+### 3.3 Lists
+
+Lists store ordered collections using square brackets:
+
+```promptica
+SET $options = [
+  "Option 1: Code review",
+  "Option 2: Bug fixing",
+  "Option 3: Architecture design"
+];
+
+// Alternative syntax with ITEM keyword
+SET $tasks = [
+  ITEM "Analyze requirements",
+  ITEM "Design solution",
+  ITEM "Implement code"
 ];
 ```
 
-## 2.5 Control Flow
-### 2.5.1 Step
-```
-STEP "Instruction or content for this step";
+### 3.4 Variable Interpolation
+
+Variables can be embedded in strings using the `$variable_name` syntax:
+
+```promptica
+SET $name = "Alice";
+RESPOND "Hello, $name! Welcome to the system.";
 ```
 
-### 2.5.2 Conditional Statement
+---
+
+## 4. Control Flow Structures
+
+### 4.1 Sequential Steps
+
+Use `STEP` to define logical phases in your prompt:
+
+```promptica
+STEP "Phase 1: Understand user requirements";
+RESPOND "Let me understand what you need.";
+
+STEP "Phase 2: Generate solution";
+RESPOND "Based on your input, here's my recommendation...";
 ```
-IF (condition) {
-  // Code executed if condition is true
-} ELSE IF (another_condition) {
-  // Code executed if another_condition is true
+
+### 4.2 Conditional Statements
+
+**Basic IF-ELSE**:
+```promptica
+IF ($difficulty == "easy") {
+  RESPOND "This is a straightforward problem.";
+} ELSE IF ($difficulty == "medium") {
+  RESPOND "This requires some careful thought.";
 } ELSE {
-  // Code executed if no conditions are true
+  RESPOND "This is a complex challenge.";
 }
 ```
 
-### 2.5.3 Loop
-While Loop:
+**Multiple Conditions**:
+```promptica
+IF ($score > 80 AND $attempts < 3) {
+  RESPOND "Excellent performance!";
+} ELSE IF ($score > 60 OR $has_bonus == true) {
+  RESPOND "Good job!";
+} ELSE {
+  RESPOND "Keep practicing!";
+}
 ```
-WHILE (condition) {
-  // Code executed repeatedly while condition is true
 
-  IF (exit_condition) {
-    BREAK;  // Exit the loop
+### 4.3 Loops
+
+**WHILE Loop**:
+```promptica
+SET $attempts = 0;
+WHILE ($attempts < 3 AND NOT $success) {
+  ASK "Please provide more details.";
+  SET $attempts = $attempts + 1;
+  
+  IF ($attempts >= 3) {
+    RESPOND "I'll proceed with the information available.";
+    BREAK;
   }
 }
 ```
 
-Do-While Loop [I did not use it in my own practice]:
-```
+**DO-WHILE Loop** (executes at least once):
+```promptica
 DO {
-  // Code executed at least once, then repeatedly while condition is true
-} WHILE (condition);
+  ASK "Would you like to continue?";
+  // Process response
+} WHILE ($user_wants_more == true);
 ```
 
-Foreach Loop:
-```
-FOREACH (item IN $collection) {
-  // Code executed for each item in collection
+**FOREACH Loop**:
+```promptica
+SET $topics = ["variables", "functions", "loops"];
+
+FOREACH ($topic IN $topics) {
+  RESPOND "Let me explain $topic in detail...";
+  STEP "Provide explanation for $topic";
 }
 ```
 
-## 2.6 Pattern Matching
-```
-MATCH (expression) {
-  CASE pattern1 -> {
-    // Code executed if expression matches pattern1
+### 4.4 Pattern Matching
+
+The `MATCH` statement provides elegant pattern matching:
+
+```promptica
+MATCH ($user_intent) {
+  CASE "code_generation" -> {
+    STEP "Generate code solution";
+    RESPOND "I'll write the code for you.";
   }
-  CASE pattern2 -> {
-    // Code executed if expression matches pattern2
+  CASE "debugging" -> {
+    STEP "Analyze and fix errors";
+    RESPOND "Let me help debug that issue.";
+  }
+  CASE "explanation" -> {
+    STEP "Provide detailed explanation";
+    RESPOND "I'll explain this concept step by step.";
   }
   DEFAULT -> {
-    // Code executed if no patterns match
+    ASK "Could you clarify what you need help with?";
   }
 }
 ```
 
-2.7 Function
-Function Declaration:
-```
-FUNCTION FunctionName($param1, $param2) {
-  // Function body
-  RETURN value;  // Optional return value
+---
+
+## 5. Functions
+
+### 5.1 Function Declaration
+
+```promptica
+FUNCTION CalculateScore($correct, $total) {
+  SET $percentage = ($correct / $total) * 100;
+  
+  IF ($percentage >= 90) {
+    RETURN "excellent";
+  } ELSE IF ($percentage >= 70) {
+    RETURN "good";
+  } ELSE {
+    RETURN "needs improvement";
+  }
 }
 ```
 
-Function Call:
-```
-CALL FunctionName($param1, $param2);
+### 5.2 Function Invocation
 
-// or with return value:
-SET result = CALL FunctionName($param1, $param2);
+```promptica
+// Call function and capture return value
+SET $result = CALL CalculateScore(18, 20);
+RESPOND "Your performance is $result.";
+
+// Call function without capturing return value
+CALL LogActivity("User completed quiz");
 ```
 
-## 2.8 Error Handling
+---
+
+## 6. Output Operations
+
+**Output Commands**:
+
+- **RESPOND**: Generate a response to the user
+- **ASK**: Pose a question to the user
+- **SUGGEST**: Offer a suggestion or recommendation
+
+```promptica
+RESPOND "I understand your question.";
+ASK "What programming language are you using?";
+SUGGEST "Consider using a try-catch block for error handling.";
 ```
+
+---
+
+## 7. Error Handling
+
+Use `TRY-CATCH-FINALLY` for robust error handling:
+
+```promptica
 TRY {
-  // Code that might cause an error
-} CATCH (error_condition) {
-  // Code executed if error occurs
+  STEP "Attempt to process user input";
+  // Processing logic
+  
+  IF ($timeout_occurred) {
+    THROW "timeout_error";
+  }
+} CATCH ("timeout_error") {
+  RESPOND "The operation took too long. Let me provide a simplified answer.";
+} CATCH ("invalid_input") {
+  ASK "Could you rephrase your question?";
 } FINALLY {
-  // Code always executed after try/catch
+  STEP "Cleanup and finalization";
+  RESPOND "Is there anything else I can help with?";
 }
 ```
 
-## 2.9 Output Generation
-```
-RESPOND "Response text";
-ASK "Question to the user?";
-SUGGEST "Suggestion for the user";
+---
+
+## 8. Operators Reference
+
+### 8.1 Comparison Operators
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `==` | Equal to | `$x == 5` |
+| `!=` | Not equal to | `$x != 0` |
+| `>` | Greater than | `$score > 80` |
+| `<` | Less than | `$attempts < 3` |
+| `>=` | Greater or equal | `$age >= 18` |
+| `<=` | Less or equal | `$count <= 10` |
+
+### 8.2 Logical Operators
+
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `AND` | Logical AND | `$x > 0 AND $x < 10` |
+| `OR` | Logical OR | `$status == "ready" OR $status == "pending"` |
+| `NOT` | Logical NOT | `NOT $is_complete` |
+
+### 8.3 String Operations
+
+```promptica
+// Check if string contains substring
+IF ($text.CONTAINS("error")) {
+  RESPOND "An error was detected.";
+}
+
+// Alternative syntax
+IF ($text CONTAINS "warning") {
+  RESPOND "Warning found.";
+}
+
+// Regular expression matching
+IF (REGEX($email, "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")) {
+  RESPOND "Valid email format.";
+}
+
+// String metrics
+SET $word_count = COUNT_WORDS($text);
+SET $char_count = COUNT_CHARS($text);
 ```
 
-## 2.10 Code Blocks
-[I did not use it in my own practice]
+### 8.4 Arithmetic Operations
+
+```promptica
+SET $sum = $a + $b;
+SET $difference = $a - $b;
+SET $product = $a * $b;
+SET $quotient = $a / $b;
+SET $remainder = $a % $b;
 ```
-CODE {
-  language: "python";
-  // Code content
+
+---
+
+## 9. Best Practices
+
+### 9.1 Modularity
+
+Break complex prompts into reusable functions:
+
+```promptica
+FUNCTION ValidateInput($input) {
+  IF (NOT $input OR $input == "") {
+    RETURN false;
+  }
+  RETURN true;
+}
+
+FUNCTION ProcessUserQuery($query) {
+  IF (NOT CALL ValidateInput($query)) {
+    ASK "Please provide a valid query.";
+    RETURN;
+  }
+  
+  // Process valid query
+  STEP "Analyze query intent";
+  // ...
 }
 ```
 
-# 3. Operators
-## 3.1 Logical Operators
-- AND - Logical AND
-- OR - Logical OR
-- NOT - Logical NOT
-## 3.2 Comparison Operators
-- == - Equal to
-- != - Not equal to
-- > - Greater than
-- < - Less than
-- >= - Greater than or equal to
-- <= - Less than or equal to
-## 3.3 String Operations
-- $string.CONTAINS($substring) - Check if string contains substring
-- $string CONTAINS $substring - Check if string contains substring
-- REGEX(string, pattern, flags) - Match string against the regex pattern
-- COUNT_WORDS(string) - Count words in string
-- COUNT_CHARS(string) - Count characters in string
+### 9.2 Error Resilience
 
-## 4. Complete Example
+Always include fallback logic:
+
+```promptica
+SET $retry_count = 0;
+SET $max_retries = 3;
+
+WHILE ($retry_count < $max_retries) {
+  TRY {
+    // Attempt operation
+    BREAK;  // Success - exit loop
+  } CATCH ("error") {
+    SET $retry_count = $retry_count + 1;
+    IF ($retry_count >= $max_retries) {
+      RESPOND "Unable to complete the operation. Here's what I can offer instead...";
+    }
+  }
+}
 ```
+
+### 9.3 Clear Variable Naming
+
+Use descriptive names that convey purpose:
+
+```promptica
+// Good
+SET $user_authentication_status = "verified";
+SET $maximum_retry_attempts = 3;
+
+// Avoid
+SET $status = "verified";
+SET $max = 3;
+```
+
+### 9.4 Structured Workflow
+
+Organize prompts with clear phases:
+
+```promptica
 DSL {
+  // 1. Initialization
+  STEP "Initialize configuration";
+  SET $config = { /* ... */ };
+  
+  // 2. Input validation
+  STEP "Validate user input";
+  // ...
+  
+  // 3. Main processing
+  STEP "Process user request";
+  // ...
+  
+  // 4. Generate output
+  STEP "Generate response";
+  // ...
+  
+  // 5. Cleanup
+  STEP "Finalize and offer follow-up";
+  // ...
+}
+```
+
+---
+
+## 10. Complete Example: Technical Assistant
+
+```promptica
+DSL {
+  // Configuration
   SET $config = {
-    expertise: "programming, data science";
-    tone: "helpful, educational";
-    max_attempts: 3;
+    max_clarification_attempts: 3;
+    supported_languages: ["python", "javascript", "java", "go"];
+    complexity_levels: ["beginner", "intermediate", "advanced"];
   };
-  FUNCTION CalculateRelevance($query, $topic) {
+  
+  // Helper function: Calculate relevance score
+  FUNCTION CalculateRelevance($query, $keywords) {
     SET $score = 0;
-
-    IF ($query.CONTAINS($topic)) {
-      SET $score = $score + 5;
+    
+    FOREACH ($keyword IN $keywords) {
+      IF ($query.CONTAINS($keyword)) {
+        SET $score = $score + 1;
+      }
     }
-
-    IF ($query.CONTAINS("explain") OR $query.CONTAINS("how")) {
-      SET $score = $score + 3;
-    }
-
+    
     RETURN $score;
   }
-
-  FUNCTION GenerateExample($concept, $difficulty) {
-    IF ($difficulty == "beginner") {
-      RETURN "Here's a simple example of $concept...";
-    } ELSEIF ($difficulty == "intermediate") {
-      RETURN "For a more advanced example of $concept...";
-    } ELSE {
-      RETURN "Here's an expert-level demonstration of $concept...";
+  
+  // Helper function: Generate explanation
+  FUNCTION GenerateExplanation($language, $complexity) {
+    MATCH ($language) {
+      CASE "python" -> {
+        IF ($complexity == "beginner") {
+          RESPOND "For Python beginners, start with basic functions and control flow.";
+          RESPOND "Example: Use def to define functions, and remember Python uses indentation.";
+        } ELSE {
+          RESPOND "For advanced Python, focus on async/await, type hints, and error handling.";
+          RESPOND "Consider using context managers and decorators for cleaner code.";
+        }
+      }
+      CASE "javascript" -> {
+        RESPOND "For JavaScript, master promises, async/await, and modern ES6+ features.";
+        RESPOND "Focus on understanding closures, arrow functions, and the event loop.";
+      }
+      DEFAULT -> {
+        RESPOND "I can provide guidance for: $config.supported_languages";
+      }
     }
   }
-  // Main prompt flow
-  STEP "Greet the user";
-  RESPOND "Hello! I'm your technical assistant. How can I help you today?";
-
-  SET $clarity_attempts = 0;
-
-  WHILE ("query is unclear" AND clarity_attempts < $config.max_attempts) {
-    ASK "Could you please clarify what you're looking for?";
-    INCREMENT $clarity_attempts;
-
-    IF ($clarity_attempts >= $config.max_attempts) {
-      RESPOND "Let me try my best with what I understand so far.";
+  
+  // Main workflow
+  STEP "1. Greet and understand user needs";
+  RESPOND "Hello! I'm your technical coding assistant. How can I help you today?";
+  
+  // Input clarification loop
+  SET $clarification_attempts = 0;
+  SET $query_is_clear = false;
+  
+  WHILE (NOT $query_is_clear AND $clarification_attempts < $config.max_clarification_attempts) {
+    IF (COUNT_WORDS($user_query) < 5) {
+      ASK "Could you provide more details about what you're trying to achieve?";
+      SET $clarification_attempts = $clarification_attempts + 1;
+    } ELSE {
+      SET $query_is_clear = true;
+    }
+    
+    IF ($clarification_attempts >= $config.max_clarification_attempts) {
+      RESPOND "I'll help based on what I understand so far.";
       BREAK;
     }
   }
-  // Process the query
-  SET $relevance = CALL CalculateRelevance($user_query, "programming");
-
-  IF ($relevance > 5) {
-    STEP "Analyze programming question";
-
-    MATCH ($programming_language) {
-      CASE "python" -> {
-        RESPOND "I see you're working with Python.";
-        SET example = CALL GenerateExample("Python", user_skill_level);
-        RESPOND $example;
-
-        CODE {
-          language: "python";
-          """
-          def example_function(param):
-              # This demonstrates the concept
-              result = param * 2
-              return result
-
-          # Usage example
-          output = example_function(21)
-          print(f"The result is: {output}")
-          """
-        }
-      }
-
-      CASE "javascript" -> {
-        RESPOND "JavaScript is a great choice for this.";
-        SET $example = CALL GenerateExample("JavaScript", user_skill_level);
-        RESPOND $example;
-
-        CODE {
-          language: "javascript";
-          """
-          function exampleFunction(param) {
-            // This demonstrates the concept
-            const result = param * 2;
-            return result;
-          }
-
-          // Usage example
-          const output = exampleFunction(21);
-          console.log(The result is: ${output});
-          """
-        }
-      }
-
-      DEFAULT -> {
-        RESPOND "I can help with various programming languages.";
-        ASK "Which programming language are you using?";
+  
+  // Analyze query intent
+  STEP "2. Analyze query and determine assistance type";
+  
+  SET $programming_keywords = ["code", "function", "debug", "error", "implement"];
+  SET $relevance_score = CALL CalculateRelevance($user_query, $programming_keywords);
+  
+  IF ($relevance_score >= 2) {
+    STEP "3. Provide programming assistance";
+    
+    // Determine language
+    SET $detected_language = "unknown";
+    FOREACH ($lang IN $config.supported_languages) {
+      IF ($user_query.CONTAINS($lang)) {
+        SET $detected_language = $lang;
+        BREAK;
       }
     }
+    
+    IF ($detected_language != "unknown") {
+      RESPOND "I see you're working with $detected_language.";
+      
+      // Determine complexity
+      SET $complexity = "intermediate";
+      IF ($user_query.CONTAINS("beginner") OR $user_query.CONTAINS("simple")) {
+        SET $complexity = "beginner";
+      } ELSE IF ($user_query.CONTAINS("advanced") OR $user_query.CONTAINS("complex")) {
+        SET $complexity = "advanced";
+      }
+      
+      CALL GenerateExplanation($detected_language, $complexity);
+      
+      SUGGEST "Consider breaking down complex problems into smaller, testable functions.";
+    } ELSE {
+      ASK "Which programming language are you using?";
+    }
   } ELSE {
-    STEP "Provide general assistance";
-    RESPOND "I understand you need help with a technical question.";
-    SET $a_list = [
-      "I can explain programming concepts",
-      "I can write code examples",
-      "I can debug issues in your code",
+    STEP "3. Provide general technical guidance";
+    RESPOND "I can help you with various technical topics:";
+    
+    SET $assistance_options = [
+      "Code review and best practices",
+      "Algorithm design and optimization",
+      "Debugging and troubleshooting",
+      "Architecture and design patterns"
     ];
-    ASK "Which of these would be most helpful?";
+    
+    FOREACH ($option IN $assistance_options) {
+      RESPOND "- $option";
+    }
+    
+    ASK "Which area would be most helpful for you?";
   }
-
+  
+  // Error handling and wrap-up
   TRY {
-    STEP "Provide follow-up assistance";
-    // Additional assistance logic
-  } CATCH ("time limit exceeded") {
-    RESPOND "We're running out of time, so let me summarize:";
-    STEP "Provide quick summary";
+    STEP "4. Provide follow-up assistance";
+    RESPOND "Would you like me to elaborate on any part of the solution?";
+  } CATCH ("timeout") {
+    RESPOND "We're approaching the time limit. Let me summarize the key points:";
+    STEP "Provide concise summary";
   } FINALLY {
-    RESPOND "Is there anything else I can help with?";
+    RESPOND "Feel free to ask if you need clarification or have additional questions!";
   }
 }
 ```
 
-# Design Thoughts & Suggestions
-1. **Modularity**: Break complex prompts into functions for reusability
-2. **Error Handling**: Always include fallback responses for unexpected inputs
-3. **Clarity**: Use descriptive variable names and STEP descriptions
-4. **Incremental Development**: Start with a basic prompt and expand functionality
-5. **Testing**: Test prompts with different inputs to ensure robustness
+---
+
+## 11. Implementation Guidelines
+
+### 11.1 Incremental Development
+
+1. Start with a basic prompt structure
+2. Add variables and configuration
+3. Implement control flow
+4. Extract reusable logic into functions
+5. Add error handling
+6. Test with various inputs
+7. Refine and optimize
+
+### 11.2 Testing Strategy
+
+- Test with minimal inputs
+- Test with edge cases (empty strings, zero values)
+- Test with invalid inputs
+- Test loop termination conditions
+- Verify all code paths are reachable
+
+### 11.3 Documentation
+
+Include comments for:
+- Complex logic
+- Non-obvious design decisions
+- Function parameters and return values
+- Configuration options
+
+---
+
+## 12. Future Enhancements (Roadmap)
+
+Potential features for future versions:
+- Import/export of function libraries
+- Macro system for code generation
+- Type system for variables
+- Debugging and profiling tools
+- Integration with popular LLM APIs
+- Visual prompt flow designer
+
+---
+
+## Appendix: Syntax Quick Reference
+
+```promptica
+// Variables
+SET $var = value;
+
+// Control Flow
+IF (condition) { }
+WHILE (condition) { }
+FOREACH ($item IN $list) { }
+MATCH ($expr) { CASE value -> { } }
+
+// Functions
+FUNCTION Name($param) { RETURN value; }
+CALL Name($arg);
+
+// Output
+RESPOND "text";
+ASK "question?";
+SUGGEST "recommendation";
+
+// Error Handling
+TRY { } CATCH (error) { } FINALLY { }
+
+// Operators
+AND, OR, NOT
+==, !=, >, <, >=, <=
+CONTAINS, REGEX()
+```
