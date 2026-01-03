@@ -33,11 +33,6 @@ After experimenting with multiple existing DSLs and prompt orchestration approac
 
 **promptica** represents a distilled implementation of those learnings—designed to be minimal, expressive, and practical for LLM-integrated development.
 
-## References
-
-This project draws inspiration from a wide range of prior work and experimentation.
-References and citations are currently being整理 and will be added in future updates.
-
 ## License
 
 Released under the **Apache License, Version 2.0 (Apache-2.0)**.
