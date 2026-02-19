@@ -10,10 +10,10 @@
 
 ## 项目信息
 
-> License: Apache-2.0
-> Version: v0.1
-> EMail: aaron.kb.h@gmail.com
-> WeChat: NanQuan2023
+ - License: Apache-2.0
+ - Version: v0.1
+ - EMail: aaron.kb.h@gmail.com
+ - WeChat: NanQuan2023
 
 ---
 
