@@ -25,7 +25,7 @@ DSL {
 }
 ```
 
-The `DSL` declaration is optional but recommended for clarity and tooling support.
+The `DSL` declaration is optional but recommended for complex scenarios, clarity and tooling support.
 
 ### 2.2 Statements and Syntax Rules
 
@@ -117,7 +117,7 @@ RESPOND "Based on your input, here's my recommendation...";
 ```promptica
 IF ($difficulty == "easy") {
   RESPOND "This is a straightforward problem.";
-} ELSE IF ($difficulty == "medium") {
+} ELIF ($difficulty == "medium") {
   RESPOND "This requires some careful thought.";
 } ELSE {
   RESPOND "This is a complex challenge.";
