@@ -8,6 +8,15 @@
 
 ---
 
+## 项目信息
+
+> License: Apache-2.0
+> Version: v0.1
+> EMail: aaron.kb.h@gmail.com
+> WeChat: NanQuan2023
+
+---
+
 ## 为什么选择 Promptica？
 
 Claude Skills 通常以纯 Markdown 编写——灵活，但脆弱。随着 Skill 复杂度提升，自由格式的 Markdown 难以清晰表达：
