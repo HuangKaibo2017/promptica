@@ -1,4 +1,4 @@
-# Promptica: LLM Prompting Language (LLMP)
+# Promptica: A Clean, Minimal, and Unambiguous structured for LLM Skills.
 
 ## 1. Introduction
 
