@@ -175,19 +175,19 @@ The `MATCH` statement provides elegant pattern matching:
 
 ```promptica
 MATCH ($user_intent) {
-  CASE "code_generation" -> {
+  CASE "code_generation" {
     STEP "Generate code solution";
     RESPOND "I'll write the code for you.";
   }
-  CASE "debugging" -> {
+  CASE "debugging" {
     STEP "Analyze and fix errors";
     RESPOND "Let me help debug that issue.";
   }
-  CASE "explanation" -> {
+  CASE "explanation" {
     STEP "Provide detailed explanation";
     RESPOND "I'll explain this concept step by step.";
   }
-  DEFAULT -> {
+  DEFAULT {
     ASK "Could you clarify what you need help with?";
   }
 }
@@ -440,7 +440,7 @@ DSL {
   // Helper function: Generate explanation
   FUNCTION GenerateExplanation($language, $complexity) {
     MATCH ($language) {
-      CASE "python" -> {
+      CASE "python" {
         IF ($complexity == "beginner") {
           RESPOND "For Python beginners, start with basic functions and control flow.";
           RESPOND "Example: Use def to define functions, and remember Python uses indentation.";
@@ -449,11 +449,11 @@ DSL {
           RESPOND "Consider using context managers and decorators for cleaner code.";
         }
       }
-      CASE "javascript" -> {
+      CASE "javascript" {
         RESPOND "For JavaScript, master promises, async/await, and modern ES6+ features.";
         RESPOND "Focus on understanding closures, arrow functions, and the event loop.";
       }
-      DEFAULT -> {
+      DEFAULT {
         RESPOND "I can provide guidance for: $config.supported_languages";
       }
     }
@@ -601,7 +601,7 @@ SET $var = value;
 IF (condition) { }
 WHILE (condition) { }
 FOREACH ($item IN $list) { }
-MATCH ($expr) { CASE value -> { } }
+MATCH ($expr) { CASE value { ... } }
 
 // Functions
 FUNCTION Name($param) { RETURN value; }
