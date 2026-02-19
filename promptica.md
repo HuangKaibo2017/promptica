@@ -1,8 +1,8 @@
-# Promptica: A Clean, Minimal, and Unambiguous structured for LLM Skills.
+# Promptica: A Clean, Minimal, and Unambiguous tool for LLM Skills.
 
 ## 1. Introduction
 
-**Promptica** adopts the methodology of Domain-Specific Languages (DSL), an instruction to create structured, logical, and repeatable prompts for LLMs, especially Skills, enabling developers to build complex workflows featuring control flow, variables, functions, and error handling.
+**Promptica** adopts the methodology of Domain-Specific Languages (DSL), a tool to create structured, logical, and repeatable prompts for LLMs, especially Skills, enabling developers to build complex workflows featuring control flow, variables, functions, and error handling.
 
 ### 1.1 Project Information
 
