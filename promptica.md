@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-**Promptica** is a domain-specific language (DSL) designed to create structured, logical, and repeatable prompts for Large Language Models (LLMs). It enables developers to build complex prompt workflows with control flow, variables, functions, and error handling.
+**Promptica** adopts the methodology of Domain-Specific Languages (DSL), an instruction to create structured, logical, and repeatable prompts for LLMs, especially Skills, enabling developers to build complex workflows featuring control flow, variables, functions, and error handling.
 
 ### 1.1 Project Information
 
