@@ -7,7 +7,7 @@
 ### 1.1 Project Information
 
 - **License**: Apache-2.0
-- **Version**: v0.1
+- **Version**: v0.3
 - **Contact**: aaron.kb.h@gmail.com
 - **WeChat**: NanQuan2023
 
