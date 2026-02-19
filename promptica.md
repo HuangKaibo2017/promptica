@@ -78,11 +78,10 @@ SET $options = [
   "Option 3: Architecture design"
 ];
 
-// Alternative syntax with ITEM keyword
 SET $tasks = [
-  ITEM "Analyze requirements",
-  ITEM "Design solution",
-  ITEM "Implement code"
+  "Analyze requirements",
+  "Design solution",
+  "Implement code"
 ];
 ```
 
